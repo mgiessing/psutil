@@ -41,10 +41,19 @@ jobs:
     - uses: actions/setup-python@v4
       with:
         python-version: 3.11
+    - name: Set up QEMU
+      if: runner.os == 'Linux'
+      uses: docker/setup-qemu-action@v2
+      with:
+        platforms: all
 
     - name: Create wheels + run tests
       uses: pypa/cibuildwheel@v2.11.2
-
+      env:
+        # configure cibuildwheel to build native archs ('auto'), and some
+        # emulated ones
+        CIBW_ARCHS_LINUX: auto aarch64 ppc64le
+        
     - name: Upload wheels
       uses: actions/upload-artifact@v3
       with:
